@@ -46,9 +46,30 @@ The dataset contains one subfoler and one CSV file:
 
 
 ### Demo data load
-We provide a dataloader for loading the raw sequences or the one-hot encoded matrix from the fasta file, and the target from the partition CSV file as the batch. 
+We provide a dataloader for loading the raw sequences and the truth labels from the fasta file and the partition CSV file. The example code shown below:
 
-TO BE UPDATED SOON..
+```python
+import Dataset
+from torch.utils.data import DataLoader
+import os
+DATA_ROOT = "/home/smli/ssd/miniHackathon/"
+
+# set the `split` as "test" when you are evaluating.
+# sample_list = [], or gene_list = [] means all individuals and all genes of the specific split category will be used. if you want to select subset of them, pass the list to the corresponding argument.
+# you can also set target_name="raw count"/"log_count"/"rpkm" as you want
+
+trainDataset = Dataset.SampleGeneExpressionDataset(split="train",csv_file=os.path.join(DATA_ROOT,"partitions.csv"),consensus_root=os.path.join(DATA_ROOT,"fasta"),sample_list=[],gene_list=[],target_name="log_TPM")
+# set the batch size or the sampler as you want.
+trainDataLoader = DataLoader(trainDataset, batch_size=1,shuffle=True)
+# iterate the dataset, modify it as needed to utilize gLM embeddings!
+for cur_seq_1, cur_seq_2, sample_target,sample_name,gene_name in trainDataLoader:
+    print(f"cur_seq_1: {cur_seq_1}")
+    print(f"cur_seq_2: {cur_seq_2}")
+    print(f"sample_target:{sample_target}")
+    print(f"sample_name:{sample_name}")
+    print(f"gene_name: {gene_name}")
+    break
+```
 
 Alternatively, you can also implement your own dataloader.
 
