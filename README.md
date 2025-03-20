@@ -71,3 +71,5 @@ This would be an ideal task to demonstrate the zero-shot capability of
 
 ### Sponsors
 
+* HKU's [CPOS](https://cpos.hku.hk/) for the GPU support!
+* HKUMed & School of Biomedical Sciences
