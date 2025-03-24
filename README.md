@@ -14,16 +14,18 @@ Materials are stored in this GitHub repo:
 
 ### Schedule
 
-- Full day intense hackathon: April 2nd, 2025
+- Full-day intense hackathon: April 2nd (**8.30am-8.30pm**) briefing at _Seminar Rm 1A_, G/F, 5 Sassoon Rd, 2025
 
-- Tutorial: March 26th, 2025, 2-3.30pm by Dr Shumin Li
+- Tutorial: March 26th, 2025, **2-3.30pm** at _Seminar Rm 1A_, G/F, 5 Sassoon Rd, by Dr Shumin Li (& Fangxin Cai / Ruiyan Hou)
+
+- Seminar: March 25th, 2025, **4-5pm** at _Lecture Theatre 1_, 21 Sassoon Rd, by Dr Shumin Li
 
 
 ### Candidate models
 
 1. Evo2 ([bioRxiv](https://www.biorxiv.org/content/10.1101/2025.02.18.638918v1)): 
    7B or 40B with trained on 9.3 trillion DNA base pairs (in 1 million token 
-   context)
+   contexts)
 
 2. NucleotideTransformer ([paper](https://www.nature.com/articles/s41592-024-02523-z))
    Model: ranging from 50 million up to 2.5 billion parameters and integrating 
@@ -61,8 +63,8 @@ In this task, we will use the reference sequence and its regulatory regions to
 predict the cell type-specific transcription factor bindings.
 
 As you can see, the input data is limited, mainly the relatively short sequence,
-optionally with its cic-gene expression (maybe chromatin open accessibility in 
-the future), but the output is extremely large, not only many TFs but in diverse 
+optionally with its cis-gene expression (maybe chromatin open accessibility in 
+the future), but the output is extremely large, not only for many TFs but also in diverse 
 cell conditions.
 
 This would be an ideal task to demonstrate the zero-shot capability of 
