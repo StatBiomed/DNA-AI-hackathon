@@ -12,9 +12,9 @@ Features:
 
 
 # Data
-- Bulk RNA seq (./data/ad_rna_bulk.h5ad) encompassing 600 samples in 111 tissues. Entry: tpm
-- ChIP (./data/ad_chip_filtered.h5ad) encompassing 1701 samples in 111 tissues. Entry: binary
-- ChIP sequences (./data/chip_seqs.fasta)
+- Bulk RNA seq (ad_rna_bulk.h5ad) encompassing 600 samples in 111 tissues. Entry: tpm
+- ChIP (ad_chip_filtered.h5ad) encompassing 1701 samples in 111 tissues. Entry: binary
+- ChIP sequences (chip_seqs.fasta)
 
 - See preprocess.ipynb for preprocessing and other details.
 
