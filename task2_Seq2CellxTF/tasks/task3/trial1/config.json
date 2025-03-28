@@ -1,0 +1,22 @@
+{
+    "seq": 
+        {
+            "test": ["chr22"],
+             "val": ["chr21"]
+        },
+    "celltype_TF":
+        {
+            "all_ct" : [],
+            "all_tf" : [],
+            "test":["HepG2_MYC", "K562_REST", 
+                    "HepG2_ZSCAN21",                
+                    "neural cell_REST"           
+                    ],
+            "val":["GM12878_YY1",
+                   "SK-N-SH_BACH2",             
+                   "PFSK-1_REST"               
+                ]
+        },
+        
+"note" : "generalize to unseen celltypes and tfs"
+}

@@ -1,0 +1,20 @@
+{"seq": 
+    {
+        "test": ["chr22"],
+        "val": ["chr21"]
+    },
+
+"celltype_TF":
+    {
+        "all_ct" : [],
+        "all_tf" : ["REST"],
+        "test":["K562_REST",
+                "neural cell_REST"
+                ],
+        "val":[
+            "PFSK-1_REST"
+            ]
+    },
+    
+"note" : "fixed tf, generalize to unseen cells"
+}

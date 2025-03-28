@@ -1,0 +1,20 @@
+{"seq": 
+    {
+        "test": ["chr22"],
+            "val": ["chr21"]
+    },
+
+"celltype_TF":
+    {
+        "all_ct" : ["K562"],
+        "all_tf" : [],
+        "test":["K562_REST",
+                "K562_ZNF449"
+                ],
+        "val":[
+            "K562_ETS2"
+            ]
+    },
+    
+"note" : "fixed celltype, generalize to unseen TFs"
+}
