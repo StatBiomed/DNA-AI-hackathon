@@ -82,6 +82,7 @@ class SampleGeneExpressionDataset(torch.utils.data.Dataset):
         sample_target = row[self.target_name]
         cur_sample_fasta_file = self.sample_fasta[cur_sample]
         cur_gene_name = row["gene"]
+        cur_strand = row["strand"]
 
         # allele 1 information
         cur_sample_fasta_file_1 = cur_sample_fasta_file[0]
@@ -90,6 +91,11 @@ class SampleGeneExpressionDataset(torch.utils.data.Dataset):
         # allele 2 information
         cur_sample_fasta_file_2 = cur_sample_fasta_file[1]
         original_cur_sample_seq_2 =  str(cur_sample_fasta_file_2[cur_gene_name])
+
+
+        if(cur_strand=='-'):
+
+            pass
         if(not self.return_ref):
             return original_cur_sample_seq_1, original_cur_sample_seq_2, sample_target,cur_sample,cur_gene_name
         
