@@ -1,16 +1,20 @@
-from enformer_pytorch import Enformer,seq_indices_to_one_hot,str_to_one_hot
 import os
 import torch
 from tqdm import tqdm
 import pyfaidx
 import pandas as pd
 
-
+ref_PATH = ""
+fasta_ROOT = ""
 class SampleGeneExpressionDataset(torch.utils.data.Dataset):
     def __init__(self,split,csv_file,ref_path=ref_PATH,\
     consensus_root=fasta_ROOT,seq_len=32000,device='cuda',target_name='log_TPM',\
     selected_gene=[],selected_samples=[],return_ref=False):
         cur_split_file = pd.read_csv(csv_file)
+
+        if(target_name=="promoter activity"):
+            cur_split_file = cur_split_file[cur_split_file["promoter valid row"]==1]
+        
         f1 = cur_split_file['split']==split
         f2 = cur_split_file['sample']=='ref'
         self.consensus_root = consensus_root
@@ -68,7 +72,7 @@ class SampleGeneExpressionDataset(torch.utils.data.Dataset):
             sample_fasta[cur_index] = cur_fasta_data_list
         
         self.sample_df = self.sample_df[~self.sample_df['sample'].isin(not_existed_samples)]
-        print("sample file not found",not_existed_samples)
+        #print("sample file not found",not_existed_samples)
         return sample_fasta
 
     def __len__(self):
@@ -92,10 +96,6 @@ class SampleGeneExpressionDataset(torch.utils.data.Dataset):
         cur_sample_fasta_file_2 = cur_sample_fasta_file[1]
         original_cur_sample_seq_2 =  str(cur_sample_fasta_file_2[cur_gene_name])
 
-
-        if(cur_strand=='-'):
-
-            pass
         if(not self.return_ref):
             return original_cur_sample_seq_1, original_cur_sample_seq_2, sample_target,cur_sample,cur_gene_name
         

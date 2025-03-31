@@ -2,6 +2,7 @@ partitions.csv
 uploads/
 genTest.py
 test*csv
+task1_SNP2GEX/test_dataset.py
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
