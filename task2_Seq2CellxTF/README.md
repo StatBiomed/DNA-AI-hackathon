@@ -9,10 +9,10 @@ We aim to test how well genomic language models predict transcription factor (TF
 3. TF-specific features (e.g., from motifs).
 
 The task is divided into 4 smaller tasks. 
-1. For a fixed TF, predict in unseen tissues. 
-2. For a fixed tissue, predict in unseen TFs.
-3. When both the TF & tissue are in the training set, but the specific combination is unseen. 
-4. When the TF & tissue are both unseen. 
+- a. For a fixed TF, predict in unseen tissues. 
+- b. For a fixed tissue, predict in unseen TFs.
+- c. When both the TF & tissue are in the training set, but the specific combination is unseen. 
+- d. When the TF & tissue are both unseen. 
 
 ## Overview of the data & cartoon for the sub-tasks.
 * Number of ChIP samples. 
@@ -51,13 +51,14 @@ Features:
 from helpers import * 
 
 BASE_DIR = "/ssd/users/cfx"
+data_dir = f"{BASE_DIR}/DNA-AI-hackathon/task2_Seq2CellxTF/data" 
 
 data = DataLoader(
     trial_path="./tasks/task1/trial1",
-    rna_path = "./data/ad_rna_bulk.h5ad",
-    chip_path = "./data/ad_chip_chromsubset.h5ad",
+    rna_path = f"{data_dir}/ad_rna_bulk.h5ad",
+    chip_path = f"{data_dir}/ad_chip_chromsubset.h5ad",
     tf_path = f"{BASE_DIR}/genomes/JASPAR_human_TFs_meme/20250327110737_JASPAR2024_combined_matrices_532533_meme.txt",
-    rna_func=None,
+    rna_func = None,
     tf_func = None,
     fasta_ref = f"{BASE_DIR}/genomes/hg38/hg38.fa",
     )

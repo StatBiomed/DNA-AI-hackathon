@@ -11,6 +11,7 @@ import gc
 from typing import Callable, Optional
 
 BASE_DIR = "/ssd/users/cfx"
+MASK_TEST = True
 
 class DataLoader:
     def __init__(self, 
@@ -32,9 +33,9 @@ class DataLoader:
             rna_func (Optional[ Callable[[anndata.AnnData], pd.DataFrame]], optional): 
                     takes self.rna, \
                     returns df of (sample, features), same indices as self.rna.obs['term_name']. \
-                Defaults to take 20 pcs of log1p(tpm).\
+                Defaults to take 20 pcs of log1p(tpm).
             tf_func (Optional[ Callable[[pd.DataFrame], pd.DataFrame]], optional): \
-                    takes df with columns ['tf', 'pwm']\
+                    takes df \
                     Ret: df with tf as index, should have 'feature' column. \
                 Defaults to PWM.
             fasta_ref (_type_, optional): reference genome. Defaults to f"{BASE_DIR}/genomes/hg38/hg38.fa".
@@ -142,7 +143,7 @@ class DataLoader:
             input: df with columns ['tf', 'pwm']
             Ret: df with tf index, should have 'feature' column
         '''
-        @staticmethod 
+        # @staticmethod 
         def _tf_func(df_tf:pd.DataFrame):
             df_out = df_tf.drop_duplicates(subset=['tf'])
             df_out.index = df_out['tf']
@@ -163,12 +164,12 @@ class DataLoader:
             input: self.rna
             Ret: df of (sample, features), same indices as self.rna.obs['term_name']
         '''
-        @staticmethod
+        # @staticmethod
         def _rna_func(rna:anndata.AnnData) -> pd.DataFrame:
             sc.pp.log1p(rna)
             sc.pp.pca(rna, n_comps=20)
             rna_pc = pd.DataFrame(rna.obsm['X_pca'], index=self.rna.obs.index)
-            return rna_pc 
+            return rna_pc
         if rna_func is None:
             rna_func = _rna_func
         
@@ -220,6 +221,10 @@ class DataLoader:
         if len(self._idx_seqs[key]) == 0:
             raise Exception("empty indices, run read_seqs() first")
         X = X.iloc[:,self._idx_seqs[key]].to_numpy()
+        if MASK_TEST and key=="test":
+            X = np.empty_like(X, dtype=np.float16)
+            X[:] = np.nan 
+            print(X)
         return X 
     
     def read_seqs(self, key="test"):
