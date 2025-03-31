@@ -177,3 +177,6 @@ cython_debug/
 ### data already on server
 *.h5ad 
 *.fasta 
+*.fasta.fai
+*.pybiomart.sqlite
+test_nt_transformer.ipynb 
