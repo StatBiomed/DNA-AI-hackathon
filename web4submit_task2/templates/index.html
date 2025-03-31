@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 2 results</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Results submission for Task 2: Seq2CellxTF</h1>
+
+    <!-- Form for Model Name and File Upload -->
+    <form id="uploadForm">
+        <label for="modelName">Model Name:</label>
+        <input type="text" name="modelName" id="modelName" required><br><br>
+
+        <label for="file">Choose a file:</label>
+        <input type="file" name="file" id="file" required><br><br>
+
+        <label for="taskId">Task:</label>
+        <select name="taskId" id="taskId" required>
+        <option value="a">task 2a</option>
+        <option value="b">task 2b</option>
+        <option value="c">task 2c</option>
+        </select><br><br>
+
+        <button type="submit">Upload and Process</button>
+    </form>
+
+    <!-- Area to Display Results -->
+    <h2>Processed Results</h2>
+    <div class="task-section"> 
+        <h3>Task 2a</h3>
+        <table id="resultsTable2a">
+            <thead>
+                <tr id="tableHeaders2a"></tr>
+            </thead>
+            <tbody id="tableBody2a"></tbody>
+        </table>
+
+        <h3>Task 2b</h3>
+        <table id="resultsTable2b">
+            <thead>
+                <tr id="tableHeaders2b"></tr>
+            </thead>
+            <tbody id="tableBody2b"></tbody>
+        </table>
+
+        <h3>Task 2c</h3>
+        <table id="resultsTable2c">
+            <thead>
+                <tr id="tableHeaders2c"></tr>
+            </thead>
+            <tbody id="tableBody2c"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // let currentSortColumn = null;
+        // let sortAscending = true;
+
+        let sortStates = {
+            'a': { currentSortColumn: null, sortAscending: true },
+            'b': { currentSortColumn: null, sortAscending: true },
+            'c': { currentSortColumn: null, sortAscending: true }
+        };
+
+        async function fetchResults(){
+            fetchResultsByTaskid(taskId="a");
+            fetchResultsByTaskid(taskId="b");
+            fetchResultsByTaskid(taskId="c");
+        }
+
+        // Function to fetch and display results with column sorting
+        async function fetchResultsByTaskid(taskId) {
+            const response = await fetch(`/results/${taskId}`);
+            const results = await response.json();
+            
+            // const taskId = "a"
+            const tableHeaders = document.getElementById(`tableHeaders2${taskId}`);
+            const tableBody = document.getElementById(`tableBody2${taskId}`);
+            tableHeaders.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            if (results.length > 0) {
+                // Fetch column order from the first row of results
+                const orderedKeys = Object.keys(results[0]);
+
+                // Generate table headers with sorting capability
+                orderedKeys.forEach((header, index) => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    th.onclick = () => sortTable(index, results, taskId); // Attach sorting function
+                    tableHeaders.appendChild(th);
+                });
+
+                // Populate table rows
+                populateTableRows(results, orderedKeys, taskId);
+            }
+        }
+
+        // Function to populate table rows
+        function populateTableRows(data, columnOrder, taskId) {
+            const tableBody = document.getElementById(`tableBody2${taskId}`);
+            tableBody.innerHTML = ''; // Clear the table body
+
+            data.forEach(result => {
+                const row = document.createElement('tr');
+                columnOrder.forEach(key => {
+                    const td = document.createElement('td');
+                    td.textContent = result[key];
+                    row.appendChild(td);
+                });
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to sort the table
+        function sortTable(columnIndex, data, taskId) {
+            const tableHeaders = document.querySelectorAll(`#tableHeaders2${taskId} th`);
+            const headerKey = tableHeaders[columnIndex].textContent;
+
+            // Toggle sort direction if the same column is clicked again
+            if (sortStates[taskId].currentSortColumn === columnIndex) {
+                sortStates[taskId].sortAscending = !sortStates[taskId].sortAscending;
+            } else {
+                sortStates[taskId].sortAscending = true;
+                sortStates[taskId].currentSortColumn = columnIndex;
+            }
+
+            // var currentSortColumn = sortStates[taskId].currentSortColumn;
+            // var sortAscending = sortStates[taskId].sortAscending;
+            // if (currentSortColumn === columnIndex) {
+            //     sortAscending = !sortAscending;
+            // } else {
+            //     sortAscending = true;
+            //     currentSortColumn = columnIndex;
+            // }
+
+            // Sort data based on the selected column
+            data.sort((a, b) => {
+                if (a[headerKey] < b[headerKey]) return sortStates[taskId].sortAscending ? -1 : 1;
+                if (a[headerKey] > b[headerKey]) return sortStates[taskId].sortAscending ? 1 : -1;
+                return 0;
+            });
+
+            // Fetch column order and repopulate table with sorted data
+            const columnOrder = Object.keys(data[0]);
+            populateTableRows(data, columnOrder, taskId);
+        }
+
+        // Fetch results when the page loads
+        document.addEventListener('DOMContentLoaded', fetchResults);
+
+        // Handle file upload and refresh results
+        const form = document.getElementById('uploadForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const modelName = document.getElementById('modelName').value;
+            const fileInput = document.getElementById('file');
+            const taskId = document.getElementById("taskId").value;
+
+            if (!fileInput.files.length) {
+                alert("Please select a file to upload.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('modelName', modelName);
+            formData.append('file', fileInput.files[0]);
+            formData.append('taskId', taskId)
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+            if (result.error) {
+                alert('Error: ' + result.error);
+            } else {
+                fetchResults(); // Refresh results display after upload
+            }
+
+            // Clear form values
+            document.getElementById('modelName').value = '';
+            document.getElementById('file').value = '';
+            document.getElementById('taskId').value = '';
+        });
+    </script>
+</body>
+</html>
