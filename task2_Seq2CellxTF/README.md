@@ -35,14 +35,14 @@ Features:
 - (Optional) TF position weight matrices from JASPAR. File: 20250327110737_JASPAR2024_combined_matrices_532533_meme.txt. 
 
 ## Preprocessing details & intermediate data
-- Raw ChIP data (ad_chip.h5ad) is filtered for shared tissues (ad_chip_filtered.h5ad). See preprocess.ipynb.
+- Raw ChIP data (ad_chip.h5ad) is filtered for shared tissues with RNA data (ad_chip_filtered.h5ad). See preprocess.ipynb.
 - ad_chip_filtered.h5ad is further subsetted (ad_chip_chromsubset.h5ad). See pp_subset.ipynb. 
     - ChIP regions are subsetted to chr19-22.
     - TFs without motif annotation in JASPAR are removed. 
 
 
 # Demo data load
-* Specify the data scope & splitting in config.json (Example: ./tasks/task1/trial1/config.json).
+* Specify the data scope & splitting in config.json (Example: ./tasks/taska/trial1/config.json).
     * "all_ct"/"all_tf": Subset data by celltype/TF. Leave blank for all. 
 
 * Path to ad_rna_bulk.h5ad, ad_chip_chromsubset.h5ad: "/ssd/users/cfx/DNA-AI-hackathon/task2_Seq2CellxTF/data"
@@ -54,7 +54,7 @@ BASE_DIR = "/ssd/users/cfx"
 data_dir = f"{BASE_DIR}/DNA-AI-hackathon/task2_Seq2CellxTF/data" 
 
 data = DataLoader(
-    trial_path="./tasks/task1/trial1",
+    trial_path="./tasks/taska/trial1",
     rna_path = f"{data_dir}/ad_rna_bulk.h5ad",
     chip_path = f"{data_dir}/ad_chip_chromsubset.h5ad",
     tf_path = f"{BASE_DIR}/genomes/JASPAR_human_TFs_meme/20250327110737_JASPAR2024_combined_matrices_532533_meme.txt",
@@ -68,5 +68,6 @@ print(ds['Y_chip'].shape,       # (n_sample, n_region)
       len(ds['X_seq']),         # (n_region,)
       ds['X_rna'].shape,        # (n_sample, n_feature)
       len(ds['X_tf']))          # (n_sample)
+                                # n_sample = n_TF * n_tissues 
 ```
 
