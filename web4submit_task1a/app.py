@@ -6,6 +6,7 @@ import subprocess
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 RESULTS_FILE = 'results.csv'
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -19,7 +20,7 @@ def get_results():
     # Load results from the CSV file
     if os.path.exists(RESULTS_FILE):
         try:
-            results_df = pd.read_csv(RESULTS_FILE)
+            results_df = pd.read_csv(RESULTS_FILE).fillna("")
             results_json = results_df.to_dict(orient='records')
             return jsonify(results_json)
         except Exception as e:
@@ -42,10 +43,13 @@ def upload_file():
 
     try:
         # Execute Python script on the uploaded file
+        #print(filepath)
         result = subprocess.check_output(['python', 'process_file.py', filepath], text=True)
 
+        #print(result)
         # Create a DataFrame for the result
         result_data = result.strip().split('\n')
+        #print(result_data)
         result_df = pd.DataFrame([row.split(',') for row in result_data[1:]], columns=result_data[0].split(','))
 
         # Add the model name as a new column
@@ -65,4 +69,8 @@ def upload_file():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+
+
     app.run(host='10.64.155.14', port=5011, debug=True)
+    # test on localhost
+    #app.run(host='localhost', port=5011, debug=True)

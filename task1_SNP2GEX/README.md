@@ -70,8 +70,13 @@ for cur_seq_1, cur_seq_2, sample_target,sample_name,gene_name in trainDataLoader
     print(f"gene_name: {gene_name}")
     break
 ```
-
 Alternatively, you can also implement your own dataloader.
+
+### Evaluation
+
+You can upload your predictions and perform evaluation at our [ranking borad](http://10.64.155.14:5011) 
+
+* **Usage**: make sure your uploaded CSV file at least has three columns: `sample`, `gene`, `log_TPM`, where `log_TPM` stores the predictions.
 
 ## Task 1b: for promoter-level activities
 # Data
