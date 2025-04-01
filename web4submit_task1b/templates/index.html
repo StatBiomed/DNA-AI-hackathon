@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 1a results</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Results submission for Task 1b: SNP2GEX (Promoter Activity)</h1>
+
+    <!-- Form for Model Name and File Upload -->
+    <form id="uploadForm">
+        <label for="modelName">Model Name:</label>
+        <input type="text" name="modelName" id="modelName" required><br><br>
+
+        <label for="file">Choose a file:</label>
+        <input type="file" name="file" id="file" required><br><br>
+
+        <button type="submit">Upload and Process</button>
+    </form>
+
+    <!-- Area to Display Results -->
+    <h2>Processed Results</h2>
+    <table id="resultsTable">
+        <thead>
+            <tr id="tableHeaders"></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    <script>
+        let currentSortColumn = null;
+        let sortAscending = true;
+
+        // Function to fetch and display results with column sorting
+        async function fetchResults() {
+            const response = await fetch('/results');
+            const results = await response.json();
+
+            const tableHeaders = document.getElementById('tableHeaders');
+            const tableBody = document.getElementById('tableBody');
+            tableHeaders.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            if (results.length > 0) {
+                // Fetch column order from the first row of results
+                const orderedKeys = Object.keys(results[0]);
+
+                // Generate table headers with sorting capability
+                orderedKeys.forEach((header, index) => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    th.onclick = () => sortTable(index, results); // Attach sorting function
+                    tableHeaders.appendChild(th);
+                });
+
+                // Populate table rows
+                populateTableRows(results, orderedKeys);
+            }
+        }
+
+        // Function to populate table rows
+        function populateTableRows(data, columnOrder) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = ''; // Clear the table body
+
+            data.forEach(result => {
+                const row = document.createElement('tr');
+                columnOrder.forEach(key => {
+                    const td = document.createElement('td');
+                    td.textContent = result[key];
+                    row.appendChild(td);
+                });
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to sort the table
+        function sortTable(columnIndex, data) {
+            const tableHeaders = document.querySelectorAll('#tableHeaders th');
+            const headerKey = tableHeaders[columnIndex].textContent;
+
+            // Toggle sort direction if the same column is clicked again
+            if (currentSortColumn === columnIndex) {
+                sortAscending = !sortAscending;
+            } else {
+                sortAscending = true;
+                currentSortColumn = columnIndex;
+            }
+
+            // Sort data based on the selected column
+            data.sort((a, b) => {
+                if (a[headerKey] < b[headerKey]) return sortAscending ? -1 : 1;
+                if (a[headerKey] > b[headerKey]) return sortAscending ? 1 : -1;
+                return 0;
+            });
+
+            // Fetch column order and repopulate table with sorted data
+            const columnOrder = Object.keys(data[0]);
+            populateTableRows(data, columnOrder);
+        }
+
+        // Fetch results when the page loads
+        document.addEventListener('DOMContentLoaded', fetchResults);
+
+        // Handle file upload and refresh results
+        const form = document.getElementById('uploadForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const modelName = document.getElementById('modelName').value;
+            const fileInput = document.getElementById('file');
+
+            if (!fileInput.files.length) {
+                alert("Please select a file to upload.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('modelName', modelName);
+            formData.append('file', fileInput.files[0]);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+            if (result.error) {
+                alert('Error: ' + result.error);
+            } else {
+                fetchResults(); // Refresh results display after upload
+            }
+
+            // Clear form values
+            document.getElementById('modelName').value = '';
+            document.getElementById('file').value = '';
+        });
+    </script>
+</body>
+</html>

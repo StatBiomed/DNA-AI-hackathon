@@ -71,6 +71,13 @@ This would be an ideal task to demonstrate the zero-shot capability of
 "foundation model"
 
 
+### Sever
+- Hostname: hpcf3.cpos.hku.hk (access only within HKU network)
+- 4 computing nodes, each with 4 x L40 GPU cards, 120 thread CPU and 1TB of ram Total 10TB of SSD storage
+- Duration is from 31 Mar to 6 April (~ 1 week)
+- Jobs submission via PBS scheduler
+- Project user home folders (/home2) and project folder (/mnt/project) creation,  with 10TB shared quota assigned
+
 ### Sponsors
 
 * HKU's [CPOS](https://cpos.hku.hk/) for the GPU support!
