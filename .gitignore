@@ -184,3 +184,6 @@ cython_debug/
 *.fasta.fai
 *.pybiomart.sqlite
 test_nt_transformer.ipynb 
+task2_Seq2CellxTF/tasks/*/ground_truth.csv 
+web4submit_task2/results/
+task2_Seq2CellxTF/tasks/*/*/res*
