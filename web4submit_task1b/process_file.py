@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.DEBUG)
 # online deloyment
 DATA_ROOT = "/ssd/users/smli/miniHackathon/"
 #local test
-#DATA_ROOT = "/Users/shuminli/Documents/DNA-AI-hackathon/"
+#DATA_ROOT = "/Users/shuminli/Documents/psedu_data/"
 
 def process_file(filepath):
     # Example: Process the file (assuming it's a CSV)
@@ -19,6 +19,7 @@ def process_file(filepath):
     import datetime
     now = datetime.datetime.now()
     date_time = now.strftime("%Y-%m-%d#%H:%M:%S")
+    target_name = "promoter activity"
     
     #res_out = np.genfromtxt(filepath, dtype=float)
 
@@ -26,6 +27,7 @@ def process_file(filepath):
     res_out = pd.read_csv(filepath)
 
     df = pd.read_csv(os.path.join(DATA_ROOT,"partitions.csv"))
+    df = df[df["promoter valid row"]==1]
 
     test_labels = ['seen genes seen individuals',"seen genes unseen individuals","unseen genes"]
 
@@ -39,11 +41,11 @@ def process_file(filepath):
         f1 = res_out["gene"].isin(X_obs_data["gene"].values)
         f2 = res_out["sample"].isin(X_obs_data["sample"].values)
         res_out_subset = res_out[f1&f2]
-        res_out_ordered = X_obs_data[['gene', 'sample']].merge(res_out_subset, on=['gene', 'sample'], how='left').dropna(subset="log_TPM")
- 
-        matrix_obs  = X_obs_data.pivot(index='sample', columns='gene', values='log_TPM')
-        matrix_res  = res_out_ordered.pivot(index='sample', columns='gene', values='log_TPM')
-       
+        
+        res_out_ordered = X_obs_data[['gene', 'sample']].merge(res_out_subset, on=['gene', 'sample'], how='left').dropna(subset=target_name)
+        
+        matrix_obs  = X_obs_data.pivot(index='sample', columns='gene', values=target_name)
+        matrix_res  = res_out_ordered.pivot(index='sample', columns='gene', values=target_name)
         if(matrix_obs.shape[0]!=matrix_res.shape[0] or matrix_obs.shape[1]!=matrix_res.shape[1]):
             
             R_cross_gene = np.nan
@@ -51,6 +53,7 @@ def process_file(filepath):
             MAE = np.nan
         else:
             R_cross_gene = np.round(st.pearsonr(matrix_obs, matrix_res, axis=1)[0].mean(),5)
+            
             R_cross_sample = np.round(st.pearsonr(matrix_obs, matrix_res, axis=0)[0].mean(),5)
             MAE = np.round(np.mean(np.abs(matrix_obs - matrix_res)),5)
 

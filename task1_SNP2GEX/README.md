@@ -83,6 +83,12 @@ You can upload your predictions and perform evaluation at our [ranking borad](ht
 
 ## Task 1b: for promoter-level activities
 # Data
+* The data of `Task 1b` is most the same with `Task 1a` (including CSV and fasta files), except two additional columns:
+
+| Column | Description |
+| --- | --- |
+| `promoter activity` | promoter activity level, used as the y-labels |
+| `promoter valid row` | the flag `1` indicating valid data row  in task 1b|
 
 # Demo data load
 
@@ -111,3 +117,8 @@ for cur_seq_1, cur_seq_2, sample_target,sample_name,gene_name in trainDataLoader
     print(f"gene_name: {gene_name}")
     break
 ```
+### Evaluation
+
+You can upload your predictions and perform evaluation at our [ranking borad](http://10.64.155.14:5012) 
+
+* **Usage**: make sure your uploaded CSV file at least has three columns: `sample`, `gene`, `promoter activity`, where `promoter activity` stores the predictions.
