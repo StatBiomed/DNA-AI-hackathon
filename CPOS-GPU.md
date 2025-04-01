@@ -17,6 +17,12 @@ To login, use the command on your terminal:
 ssh USER@hpcf3.cpos.hku.hk
 ```
 
+Also, on this node, you may create symbolic link (somehow, it doesn't support via computing node):
+
+```bash
+ln -s /mnt/project/ ~/hackathon
+```
+
 ## Login to computing node
 For this special exercise with a small number of users, we can directly login 
 and run jobs on computing nodes.
