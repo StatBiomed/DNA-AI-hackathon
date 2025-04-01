@@ -122,3 +122,34 @@ for cur_seq_1, cur_seq_2, sample_target,sample_name,gene_name in trainDataLoader
 You can upload your predictions and perform evaluation at our [ranking borad](http://10.64.155.14:5012) 
 
 * **Usage**: make sure your uploaded CSV file at least has three columns: `sample`, `gene`, `promoter activity`, where `promoter activity` stores the predictions.
+
+
+
+
+# Create Env on CPOS server
+
+## Nucleotide Transformer env
+1. Step 1: Load necessary modules
+```bash
+module load miniconda3/24.11.1_py312
+module load git/2.41.0-GCCcore-12.3.0-nodocs
+module load cuda/12.1.0
+module load cuDNN/8.9.2.26-CUDA-12.1.1
+```
+
+2. Step 2: Clone the Cauduceus_repo
+
+```bash
+git clone https://github.com/instadeepai/nucleotide-transformer
+```
+
+3. Step3: 
+
+```bash
+conda create -n NT python=3.11
+source activate NT
+cd nucleotide-transformer
+pip install .
+```
+
+
