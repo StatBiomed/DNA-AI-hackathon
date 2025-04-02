@@ -41,7 +41,7 @@ terminal or configure your
 ssh USER@hpcf3-g03 -J USER@hpcf3.cpos.hku.hk
 ```
 
-2. configure your `.ssh/config` file:
+2. configure your `.ssh/config` file on your laptop/desktop:
 
 This is much easier for use VS code or Jupyter lab on web browser:
 ```
@@ -74,7 +74,20 @@ password twich, one for login-node, one for the specific computing node.
 2. Web browser:
 
 - step 1: login to the computing node
+  ```
+  # Optionally, create an environment with jupyter lab
+  module load miniconda3/24.11.1_py312
+  conda init
+  conda create -n myenv python==3.11 jupyterlab
+  conda activate myenv
+  ```
+
 - step 2: open jupyter lab
+  ```
+  # change to any port you like, as long as not used by others
+  jupyter lab --port 7111 --no-browser --ip=0.0.0.0
+  ```
+
 - step 3: type the command by adding computing node:
   ```
   ssh -N -L PORT:COMP_NODE:PORT USER@hpcf3.cpos.hku.hk
