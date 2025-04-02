@@ -23,7 +23,7 @@ def process_file(filepath):
     #res_out = np.genfromtxt(filepath, dtype=float)
 
     # force the users to upload a CSV file with columns of gene, sample, prediction
-    res_out = pd.read_csv(filepath)
+    res_out = pd.read_csv(filepath).dropna()
 
     df = pd.read_csv(os.path.join(DATA_ROOT,"partitions.csv"))
 
@@ -36,23 +36,44 @@ def process_file(filepath):
         X_obs_data = df[idx]
 
         # align two dataframe
-        f1 = res_out["gene"].isin(X_obs_data["gene"].values)
-        f2 = res_out["sample"].isin(X_obs_data["sample"].values)
-        res_out_subset = res_out[f1&f2]
+        #f1 = res_out["gene"].isin(X_obs_data["gene"].values)
+        #f2 = res_out["sample"].isin(X_obs_data["sample"].values)
+        #res_out_subset = res_out[f1&f2]
+
+        # align by uploaded file
+        f1 = X_obs_data["gene"].isin(res_out["gene"].values)
+        f2 = X_obs_data["sample"].isin(res_out["sample"].values)
+        X_obs_data = X_obs_data[f1&f2]
+        res_out_subset = res_out
+        #print("X_obs_data",X_obs_data["sample"].unique().shape)
+        #print("res_out_subset",res_out_subset["sample"].unique().shape)
+
+
+        #print("X_obs_data",X_obs_data)
+        #print("res_out_subset",res_out_subset)
+
+
         res_out_ordered = X_obs_data[['gene', 'sample']].merge(res_out_subset, on=['gene', 'sample'], how='left').dropna(subset="log_TPM")
  
         matrix_obs  = X_obs_data.pivot(index='sample', columns='gene', values='log_TPM')
         matrix_res  = res_out_ordered.pivot(index='sample', columns='gene', values='log_TPM')
+        
+        #print("cur_test_label",cur_test_label)
+        #print("matrix_obs",matrix_obs)
+        #print("matrix_res",matrix_res)
        
-        if(matrix_obs.shape[0]!=matrix_res.shape[0] or matrix_obs.shape[1]!=matrix_res.shape[1]):
+        if(matrix_obs.shape[0]!=matrix_res.shape[0] or matrix_obs.shape[1]!=matrix_res.shape[1] or matrix_res.shape[0]==0):
             
             R_cross_gene = np.nan
             R_cross_sample = np.nan
             MAE = np.nan
         else:
+            #print("running ",cur_test_label)
             R_cross_gene = np.round(st.pearsonr(matrix_obs, matrix_res, axis=1)[0].mean(),5)
             R_cross_sample = np.round(st.pearsonr(matrix_obs, matrix_res, axis=0)[0].mean(),5)
             MAE = np.round(np.mean(np.abs(matrix_obs - matrix_res)),5)
+            #print(st.pearsonr(matrix_obs, matrix_res, axis=1)[0])
+            #print("R_cross_gene",R_cross_gene,"R_cross_sample",R_cross_sample,"MAE",MAE)
 
         cur_test_label = cur_test_label.replace("individuals",'indiv')
 
@@ -63,7 +84,7 @@ def process_file(filepath):
     if(os.path.exists('results.csv')):
         df_all = pd.read_csv('results.csv')
     else:
-        df_all = pd.DataFrame({"1.Rank":[],"UploadTime":[],
+        df_all = pd.DataFrame({"1.Rank":[],"UploadTime":[],"submit rows":[],
                                "seen genes seen indiv PCC (cross gene)":[],\
                                 "seen genes seen indiv PCC (cross indiv)":[],"Train MAE":[],\
                                    "seen genes unseen indiv PCC (cross gene)":[],\
@@ -75,6 +96,7 @@ def process_file(filepath):
     _rank = np.sum(df_all[rank_select_col].values >= res[rank_select_col]) + 1
     res['1.rank'] = _rank
     res['UploadTime'] = date_time
+    res["submit rows"] = res_out.shape[0]
     
     df_res = pd.DataFrame([res])
     
