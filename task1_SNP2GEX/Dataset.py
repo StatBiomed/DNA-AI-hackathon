@@ -91,10 +91,13 @@ class SampleGeneExpressionDataset(torch.utils.data.Dataset):
         # allele 1 information
         cur_sample_fasta_file_1 = cur_sample_fasta_file[0]
         original_cur_sample_seq_1 =  str(cur_sample_fasta_file_1[cur_gene_name])
+        original_cur_sample_seq_1 = ''.join([base if base in self.dictionary.keys() else 'N' for base in original_cur_sample_seq_1])
+
        
         # allele 2 information
         cur_sample_fasta_file_2 = cur_sample_fasta_file[1]
         original_cur_sample_seq_2 =  str(cur_sample_fasta_file_2[cur_gene_name])
+        original_cur_sample_seq_2 = ''.join([base if base in self.dictionary.keys() else 'N' for base in original_cur_sample_seq_2])
 
         if(not self.return_ref):
             return original_cur_sample_seq_1, original_cur_sample_seq_2, sample_target,cur_sample,cur_gene_name
