@@ -75,6 +75,6 @@ def upload_file():
 
 if __name__ == '__main__':
 
-    app.run(host='10.64.155.14', port=5012, debug=True)
+    app.run(host='10.64.155.14', port=5013, debug=True)
     ## test on localhost
     # app.run(host='localhost', port=5011, debug=True)

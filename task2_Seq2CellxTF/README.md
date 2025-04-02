@@ -33,6 +33,7 @@ Features:
 - Bulk rna-seq. File: ad_rna_bulk.h5ad. Entry: tpm
 - Chip-seq. 962 samples in 19 tissues. File: ad_chip_chromsubset.h5ad. Entry: binary
 - (Optional) TF position weight matrices from JASPAR. File: 20250327110737_JASPAR2024_combined_matrices_532533_meme.txt. 
+- (For writing fasta) Reference genome. File: hg38.fa 
 
 ## Preprocessing details & intermediate data
 - Raw ChIP data (ad_chip.h5ad) is filtered for shared tissues with RNA data (ad_chip_filtered.h5ad). See preprocess.ipynb.
@@ -45,22 +46,19 @@ Features:
 * Specify the data scope & splitting in config.json (Example: ./tasks/taska/trial1/config.json).
     * "all_ct"/"all_tf": Subset data by celltype/TF. Leave blank for all. 
 
-* Path to ad_rna_bulk.h5ad, ad_chip_chromsubset.h5ad: "/ssd/users/cfx/DNA-AI-hackathon/task2_Seq2CellxTF/data"
-
 ```python
 from helpers import * 
 
-BASE_DIR = "/ssd/users/cfx"
-data_dir = f"{BASE_DIR}/DNA-AI-hackathon/task2_Seq2CellxTF/data" 
+DATA_DIR = "/mnt/project/task2_Seq2CellxTF"
 
 data = DataLoader(
     trial_path="./tasks/taska/trial1",
-    rna_path = f"{data_dir}/ad_rna_bulk.h5ad",
-    chip_path = f"{data_dir}/ad_chip_chromsubset.h5ad",
-    tf_path = f"{BASE_DIR}/genomes/JASPAR_human_TFs_meme/20250327110737_JASPAR2024_combined_matrices_532533_meme.txt",
+    rna_path = f"{DATA_DIR}/data/ad_rna_bulk.h5ad",
+    chip_path = f"{DATA_DIR}/data/ad_chip_chromsubset.h5ad",
+    tf_path = f"{DATA_DIR}/genomes/JASPAR_human_TFs_meme/20250327110737_JASPAR2024_combined_matrices_532533_meme.txt",
     rna_func = None,
     tf_func = None,
-    fasta_ref = f"{BASE_DIR}/genomes/hg38/hg38.fa",
+    fasta_ref = f"{DATA_DIR}/genomes/hg38/hg38.fa",
     )
 
 ds = data.read_ds(key="train")
@@ -70,4 +68,19 @@ print(ds['Y_chip'].shape,       # (n_sample, n_region)
       len(ds['X_tf']))          # (n_sample)
                                 # n_sample = n_TF * n_tissues 
 ```
+* Region & sample indices are stored in ```data._idx_seqs``` & ```data._keys_cttf```. 
 
+# Evaluation 
+Submit as csv files (```columns=data._idx_seqs['test']```, ```index=data._keys_cttf['test']```) [here](http://10.64.155.14:5013/). 
+
+
+
+# Env
+- See task1_SNP2GEX for creating environments on the CPOS server. 
+#### Dependencies for helpers.py 
+```
+conda install bioconda::bedtools -y
+conda install --channel conda-forge --channel bioconda pybedtools
+
+pip3 install pyfaidx scanpy 
+```
