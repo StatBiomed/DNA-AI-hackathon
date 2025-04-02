@@ -38,7 +38,7 @@ terminal or configure your
 1. directly use terminal (choose your own username and computing node above):
 
 ```bash
-ssh yuanhua@hpcf3-g03 -J hpcf3.cpos.hku.hk
+ssh USER@hpcf3-g03 -J USER@hpcf3.cpos.hku.hk
 ```
 
 2. configure your `.ssh/config` file:
@@ -46,10 +46,12 @@ ssh yuanhua@hpcf3-g03 -J hpcf3.cpos.hku.hk
 This is much easier for use VS code or Jupyter lab on web browser:
 ```
 Host hpcf3-g03 hpcf3-g04 hpcf3-g05 hpcf3-g06
-    User yuanhua
-    ProxyJump yuanhua@hpcf3.cpos.hku.hk
+    User YOUR_USERNAME
+    ProxyJump YOUR_USERNAME@hpcf3.cpos.hku.hk
     ServerAliveInterval 5
 ```
+
+**Note**, change the `YOUR_USERNAME` to your username!!
 
 Then you can simply use (choose your own username and computing node above):
 
